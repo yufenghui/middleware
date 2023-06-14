@@ -10,7 +10,7 @@ docker build -t traefik-plugin:v1 .
 ```
 
 ```shell
-docker run -it --rm -p 80:80 -p 8080:8080 -v /d/data/docker/traefik/traefik.yaml:/etc/traefik/traefik.yaml traefik-plugin:v1
+docker run -it --rm -p 80:80 -p 8080:8080 -p 8082:8082 -v /d/data/docker/traefik/traefik.yaml:/etc/traefik/traefik.yaml traefik-plugin:v1
 ```
 
 #### 增加路由

@@ -32,6 +32,9 @@ entryPoints:
   #  forwardedHeaders:
   #    insecure: true
 
+  metrics:
+    address: :8082
+
 ################################################################
 # Traefik logs configuration
 ################################################################
@@ -91,6 +94,25 @@ accessLog:
   format: "common"
 
 ################################################################
+# Plugin configuration
+################################################################
+
+experimental:
+  localPlugins:
+    traefik-plugin-ipblacklist:
+      moduleName: "github.com/LyuHe-uestc/traefik-plugin-ipblacklist"
+      #version: "v0.0.2"
+
+################################################################
+# Metrics configuration
+################################################################
+
+metrics:
+  prometheus:
+    entryPoint: metrics
+    addRoutersLabels: true
+
+################################################################
 # API and dashboard configuration
 ################################################################
 
@@ -113,43 +135,41 @@ api:
   #
   dashboard: true
 
-    ################################################################
-    # Ping configuration
-    ################################################################
+################################################################
+# Ping configuration
+################################################################
 
-    # Enable ping
-    #ping:
-    # Name of the related entry point
-    #
-    # Optional
-    # Default: "traefik"
-  #
-#  entryPoint: traefik
+# Enable ping
+# ping:
+# Name of the related entry point
+#
+# Optional
+# Default: "traefik"
+#
+# entryPoint: traefik
+ping:
+  entryPoint: traefik
 
 ################################################################
 # Docker configuration backend
 ################################################################
 
-#自定义插件-ipBlackList(ip黑名单)
-experimental:
-  localPlugins:
-    traefik-plugin-ipblacklist:
-      moduleName: "github.com/LyuHe-uestc/traefik-plugin-ipblacklist"
-#      version: "v0.0.2"
-
 providers:
   providersThrottleDuration: 10s
-  # consul
-  # consul:
-  #   endpoints:
-  #     - "consul4:8500"
-  #   rootKey: "traefik"
   # redis
   redis:
     endpoints:
       - "host.docker.internal:6379"
     #password: ""
     rootKey: "traefik-elc-mac"
+
+    # consul
+    #
+    # consul:
+    #   endpoints:
+    #     - "consul4:8500"
+    #   rootKey: "traefik"
+
     # Enable Docker configuration backend
     #  docker:
     # Docker server endpoint. Can be a tcp or a unix socket endpoint.
@@ -171,4 +191,4 @@ providers:
     # Optional
     # Default: true
     #
-#    exposedByDefault: false
+    # exposedByDefault: false

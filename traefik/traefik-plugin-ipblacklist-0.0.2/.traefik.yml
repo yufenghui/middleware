@@ -1,0 +1,9 @@
+displayName: Ipblacklist Plugin
+type: middleware
+
+import: github.com/LyuHe-uestc/traefik-plugin-ipblacklist
+
+summary: 'github.com/LyuHe-uestc/traefik-plugin-ipblacklist'
+
+testData:
+  SourceRange : ["127.0.0.1/32", "192.168.1.7"]

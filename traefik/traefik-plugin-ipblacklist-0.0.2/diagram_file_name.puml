@@ -1,0 +1,72 @@
+@startuml
+namespace ip {
+    class Checker << (S,Aquamarine) >> {
+        - authorizedIPs []*net.IP
+        - authorizedIPsNet []*net.IPNet
+
+        + IsAuthorized(addr string) error
+        + Contains(addr string) (bool, error)
+        + ContainsIP(addr net.IP) bool
+
+    }
+    class DepthStrategy << (S,Aquamarine) >> {
+        + Depth int
+
+        + GetIP(req *http.Request) string
+
+    }
+    class PoolStrategy << (S,Aquamarine) >> {
+        + Checker *Checker
+
+        + GetIP(req *http.Request) string
+
+    }
+    class RemoteAddrStrategy << (S,Aquamarine) >> {
+        + GetIP(req *http.Request) string
+
+    }
+    interface Strategy  {
+        + GetIP(req *http.Request) string
+
+    }
+}
+
+"ip.Strategy" <|-- "implements""ip.DepthStrategy"
+"ip.Strategy" <|-- "implements""ip.PoolStrategy"
+"ip.Strategy" <|-- "implements""ip.RemoteAddrStrategy"
+
+"ip.Checker""uses" o-- "net.IP"
+"ip.Checker""uses" o-- "net.IPNet"
+"ip.PoolStrategy""uses" o-- "ip.Checker"
+
+namespace traefik_plugin_ipblacklist {
+    class IPBlackList << (S,Aquamarine) >> {
+        + SourceRange []string
+        + IPStrategy *IPStrategy
+
+    }
+    class IPStrategy << (S,Aquamarine) >> {
+        + Depth int
+        + ExcludedIPs []string
+
+        + Get() (ip.Strategy, error)
+
+    }
+    class ipBlackLister << (S,Aquamarine) >> {
+        - next http.Handler
+        - blackLister *ip.Checker
+        - strategy ip.Strategy
+        - name string
+
+        + ServeHTTP(rw http.ResponseWriter, req *http.Request) 
+
+    }
+}
+
+
+"traefik_plugin_ipblacklist.IPBlackList""uses" o-- "traefik_plugin_ipblacklist.IPStrategy"
+"traefik_plugin_ipblacklist.ipBlackLister""uses" o-- "http.Handler"
+"traefik_plugin_ipblacklist.ipBlackLister""uses" o-- "ip.Checker"
+"traefik_plugin_ipblacklist.ipBlackLister""uses" o-- "ip.Strategy"
+
+@enduml
